@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import com.aayush.libraryManagementAPIs.common.model.Response;
@@ -65,9 +66,14 @@ public class RequestBodyReaderAuthentication extends UsernamePasswordAuthenticat
         final String userEmail = ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername();
         final UserRegistration user = userRepository.findByEmail(userEmail).get();
         AuthSuccess loginSuccess = new AuthSuccess();
+        ArrayList<String> roleList = new ArrayList<String>();
+        user.getRoles().forEach( role -> {
+            roleList.add(role.getRole());
+        });
+        loginSuccess.setRole(roleList);
         loginSuccess.setEmail(user.getEmail());
         loginSuccess.setUsername(user.getUserDetail().getUsername());
-        loginSuccess.setUserId(user.getUserDetail().getUserId());
+        loginSuccess.setUserId(user.getId());
 
 
         Map<String,Object> loginData = new HashMap<String, Object>();

@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		http
                 .csrf().disable()
 				.authorizeRequests()
-				.antMatchers("/account/register","/home", "/book/**")
+				.antMatchers("/account/register","/account/register/**","/account/**","/home", "/book/**")
 				.permitAll()
 				.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				.antMatchers(Constants.SWAGGER_URL_PATTERN).permitAll()

@@ -5,8 +5,10 @@ import com.aayush.libraryManagementAPIs.common.messages.LibraryMessages;
 import com.aayush.libraryManagementAPIs.common.model.CommonResponse;
 import com.aayush.libraryManagementAPIs.common.model.Response;
 import com.aayush.libraryManagementAPIs.model.entity.Book;
+import com.aayush.libraryManagementAPIs.model.entity.BookReturnedLogs;
 import com.aayush.libraryManagementAPIs.model.entity.UserBookMapping;
 import com.aayush.libraryManagementAPIs.model.response.BookResponse;
+import com.aayush.libraryManagementAPIs.model.response.GenericResponse;
 import com.aayush.libraryManagementAPIs.service.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,18 +37,18 @@ public class BookController {
     }
 
     @ApiOperation(value = "Delete Book")
-    @RequestMapping(value = "/deleteBook/{id}", method = RequestMethod.DELETE)
-    public CommonResponse deleteBook(@PathVariable Long id) throws LibraryException
+    @RequestMapping(value = "/deleteBook/{bookId}", method = RequestMethod.DELETE)
+    public CommonResponse deleteBook(@PathVariable Long bookId) throws LibraryException
     {
-        return bookService.deleteBook(id);
+        return bookService.deleteBook(bookId);
     }
 
-    @ApiOperation(value = "Return Book")
+/*    @ApiOperation(value = "Return Book")
     @RequestMapping(value = "/getBook/{id}", method = RequestMethod.GET)
     public Book getBook(@PathVariable Long id) throws LibraryException
     {
         return bookService.getBook(id);
-    }
+    }*/
 
     @ApiOperation(value = "Update Book")
     @RequestMapping(value = "/updateBook", method = RequestMethod.PUT)
@@ -55,6 +57,13 @@ public class BookController {
         if (Objects.isNull(book))
             throw new LibraryException(LibraryMessages.INVALID_PARAMETER_CODE, LibraryMessages.INVALID_PARAMETER_MESSAGE);
         return bookService.updateBook(book);
+    }
+
+    @ApiOperation(value = "Get Book By Id")
+    @RequestMapping(value = "/getBookById", method = RequestMethod.GET)
+    public GenericResponse getBookById(@RequestParam("bookId") Long bookId) throws LibraryException
+    {
+        return bookService.getBookById(bookId);
     }
 
     @ApiOperation(value = "Get All Books")
@@ -73,12 +82,22 @@ public class BookController {
         return bookService.borrowBook(userBookId);
     }
 
+    @ApiOperation(value = "Return Book")
+    @RequestMapping(value = "/returnBook", method = RequestMethod.POST)
+    public CommonResponse returnBook(@RequestBody BookReturnedLogs bookReturned) throws LibraryException
+    {
+        if (Objects.isNull(bookReturned))
+            throw new LibraryException(LibraryMessages.INVALID_PARAMETER_CODE, LibraryMessages.INVALID_PARAMETER_MESSAGE);
+        return bookService.returnBook(bookReturned);
+    }
+
     @ApiOperation(value = "Get Book Borrowed By User")
     @RequestMapping(value = "/getUserBook", method = RequestMethod.GET)
-    public void getUserBook(@RequestParam("id") Long userId) throws LibraryException
+    public BookResponse getUserBook(@RequestParam("id") Long userId) throws LibraryException
     {
         if (Objects.isNull(userId))
             throw new LibraryException(LibraryMessages.INVALID_PARAMETER_CODE, LibraryMessages.INVALID_PARAMETER_MESSAGE);
-         bookService.getUserBook(userId);
+         return bookService.getUserBook(userId);
     }
+
 }

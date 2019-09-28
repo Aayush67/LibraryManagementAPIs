@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +31,20 @@ public interface BookRepository extends JpaRepository <Book,Long> {
 
     @Transactional
     @Modifying
-    @Query("update Book book set book.status = ?2 where book.id = ?1")
-    void updateBookStatus(Long bookId, Status status);
+    @Query("update Book book set book.status = ?2, book.issueDate= ?3, book.returnDate = ?4 where book.id = ?1")
+    void updateBookStatus(Long bookId, Status status, Date borrowDate, Date returnDate);
 
-    @Query(value = "select user_book_mapping.id from user_book_mapping inner JOIN book  on user_book_mapping.user_id= ?1 and user_book_mapping.book_id= book.id", nativeQuery = true)
+    @Transactional
+    @Modifying
+    @Query("update Book book set book.status = ?2, book.issueDate= ?3, book.returnDate = ?4 where book.id in ?1")
+    void updateMultipleBookStatus(List<Long> bookIds, Status status, Date borrowDate, Date returnDate);
+
+   /* @Query(value = "select user_book_mapping.id from user_book_mapping inner JOIN book  on user_book_mapping.user_id= ?1 and user_book_mapping.book_id= book.id", nativeQuery = true)
+    ArrayList<Book> getUserBook(Long userId);*/
+
+    /*@Query("select ubm.book from UserBookMapping ubm inner JOIN ubm.book  on ubm.userId= ?1 and ubm.bookId= ubm.book.id")
+    ArrayList<Book> getUserBook(Long userId);*/
+
+    @Query("select book from UserBookMapping ubm inner JOIN Book book on ubm.userId= ?1 and ubm.bookId= book.id")
     ArrayList<Book> getUserBook(Long userId);
 }
